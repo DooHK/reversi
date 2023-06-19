@@ -80,7 +80,7 @@ int isBoardFull() {
     
     for (i = 1; i <= SIZE - 1; i++) {
         for (j = 1; j <= SIZE - 1; j++) {
-            if (strcmp(board[i][j], "-") == 0) {
+            if (strcmp(board[i][j], ".") == 0) {
                 // 보드의 빈 공간이 존재하면 가득 차지 않은 것으로 판단
                 return 0;
             }
@@ -97,7 +97,7 @@ int isValidMoveAvailable() {
     for (i = 1; i <= SIZE - 1; i++) {
         for (j = 1; j <= SIZE - 1; j++) {
             // 해당 위치에 돌을 놓을 수 있는지 검사
-            if (strcmp(board[i][j], "-") == 0 && isValidMove(i, j)) {
+            if (strcmp(board[i][j], ".") == 0 && isValidMove(i, j)) {
                 return 1; // 유효한 돌을 놓을 수 있는 위치가 존재
             }
         }

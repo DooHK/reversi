@@ -16,6 +16,8 @@ struct buf{
     int x, y;
 }msg;
 sem_t sem;
+int term = 0;
+
 int listen_at_port (int portnum) 
 {
 	int sock_fd = socket(AF_INET /*IPv4*/, SOCK_STREAM /*TCP*/, 0 /*IP*/) ;
@@ -61,6 +63,9 @@ void* pick_from_mouse(){
     int canput;
     MEVENT event;
     while (1) {
+        if(term){
+            break;
+        }
         int press = 0;
         int ch = getch();
         if(strcmp(get_currentPlayer(),"W")==0){
@@ -119,6 +124,7 @@ void chat (int conn_fd)
         
         if(msg.x == -1){
             mvwprintw(stdscr,15,0,"Game end");
+            getch();
             break;
         }
         makeMove(msg.y,msg.x);
@@ -132,6 +138,7 @@ void chat (int conn_fd)
             mvwprintw(stdscr,15,0,"Board is full game over.");
             msg.x = -1;
             send(conn_fd, &msg, sizeof(msg),0) ;
+            getch();
             break;
         }
         if (!isValidMoveAvailable()) {
@@ -139,6 +146,8 @@ void chat (int conn_fd)
             mvwprintw(stdscr,15,0, "there is no place to put the rock");
             msg.x =-1;
             send(conn_fd, &msg, sizeof(msg),0) ;
+            getch();
+
             break;
         }
         sem_wait(&sem);

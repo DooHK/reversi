@@ -16,7 +16,7 @@ struct buf{
     int x, y;
 }msg;
 sem_t sem;
-
+int term = 0;
 int connect_ipaddr_port (const char * ip, int port)
 {
 	int sock_fd ;
@@ -57,6 +57,10 @@ void* pick_from_mouse(){
     while (1) {
         int press = 0;
         int ch = getch();
+
+        if(term){
+            break;
+        }
         if(strcmp(get_currentPlayer(),"B")==0){
             if (ch == KEY_MOUSE) {
                 if (getmouse(&event) == OK) {
@@ -112,27 +116,36 @@ void chat (int conn_fd)
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
             msg.x= -1;
+            term = 1;
             send(conn_fd, &msg,sizeof(msg),0) ;
+            getch();
+
             break;
         }
-        if (!isValidMoveAvailable()) {
-            // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
-            mvwprintw(stdscr,15,0, "there is no place to put the rock");
-            msg.x = -1;
-            send(conn_fd, &msg ,sizeof(msg),0) ;
-            break;
-        }
+        
         sem_wait(&sem);
+        if (!isValidMoveAvailable()) {
+            // 현재 플레이어가 돌을 놓을 수 없는 경우
+            mvwprintw(stdscr,14,0, "Pass");
+            msg.x = -2;
+            
+        }
         send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
         makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
-        
+        if(msg.x == -2){
+            if(!isValidMoveAvailable()){
+                mvwprintw(stdscr,15,0,"All player can't put stone anywhere");
+                //Count_stone(); //돌의 갯수 세기
+            }
+        }
 
         if(msg.x==-1){
             mvwprintw(stdscr,15,0,"Game end");
+            wgetch(stdscr);
             break;
         }
         
