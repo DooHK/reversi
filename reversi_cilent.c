@@ -80,27 +80,10 @@ void* pick_from_mouse(){
                     continue;
                 }
                 else{//놓을 수 있는 곳
-                    //mvwprintw(stdscr,12,0,"can put there");
-                    //wrefresh(stdscr);
                     mvwprintw(stdscr,12,0,"                ");
                     wrefresh(stdscr);
                     sem_post(&sem);
-                    //makeMove(inputx,inputy);
-                    //changePlayer();
-                    //print_board(stdscr);
-                    //wrefresh(stdscr);
-                }
-                /*if (isBoardFull()) {
-                    // 게임 보드가 가득 찬 경우
-                    mvwprintw(stdscr,15,0,"Board is full game over.");
-                    break;
-                }
-                
-                if (!isValidMoveAvailable()) {
-                    // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
-                    mvwprintw(stdscr,15,0, "there is no place to put the rock");
-                    break;
-                }*/
+                }        
             }
         }
     }
@@ -125,11 +108,11 @@ void chat (int conn_fd)
     print_board(stdscr);
     while(1){
        
-        /*if (isBoardFull()) {
+        if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
-            msg= -1;
-            send(conn_fd, &msgizeof(msg0) ;
+            msg.x= -1;
+            send(conn_fd, &msg,sizeof(msg),0) ;
             break;
         }
         if (!isValidMoveAvailable()) {
@@ -138,7 +121,7 @@ void chat (int conn_fd)
             msg.x = -1;
             send(conn_fd, &msg ,sizeof(msg),0) ;
             break;
-        }*/
+        }
         sem_wait(&sem);
         send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
         makeMove(msg.y,msg.x);
@@ -148,11 +131,11 @@ void chat (int conn_fd)
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
         
 
-        /*if(msg=-1){
+        if(msg.x==-1){
             mvwprintw(stdscr,15,0,"Game end");
             break;
-        }*/
-        //mvwprintw(stdscr,17,0,"msg.x = %d msg.y = %d",msg.x,msg.y);
+        }
+        
         wrefresh(stdscr);
         makeMove(msg.y,msg.x);
         changePlayer();

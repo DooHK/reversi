@@ -117,7 +117,7 @@ void chat (int conn_fd)
     while(1){
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
         
-        if(msg=-1){
+        if(msg.x == -1){
             mvwprintw(stdscr,15,0,"Game end");
             break;
         }
@@ -130,13 +130,15 @@ void chat (int conn_fd)
         if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
-            send(conn_fd, "quit", sizeof(msg0) ;
+            msg.x = -1;
+            send(conn_fd, &msg, sizeof(msg),0) ;
             break;
         }
         if (!isValidMoveAvailable()) {
             // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
             mvwprintw(stdscr,15,0, "there is no place to put the rock");
-            send(conn_fd, "quit", sizeof(msg0) ;
+            msg.x =-1;
+            send(conn_fd, &msg, sizeof(msg),0) ;
             break;
         }
         sem_wait(&sem);
