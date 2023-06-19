@@ -51,6 +51,7 @@ void* pick_from_mouse(){
     int inputx,inputy;
     int x=10, y=10;
     
+    
     int canput;
     MEVENT event;
     while (1) {
@@ -75,11 +76,13 @@ void* pick_from_mouse(){
                 canput = isValidMove(inputx,inputy);
                 if(canput == 0){//돌을 못놓는곳
                     mvwprintw(stdscr,12,0,"can't put there");
-                    refresh();
+                    wrefresh(stdscr);
                     continue;
                 }
                 else{//놓을 수 있는 곳
-                    mvwprintw(stdscr,12,0,"can put there");
+                    //mvwprintw(stdscr,12,0,"can put there");
+                    //wrefresh(stdscr);
+                    mvwprintw(stdscr,12,0,"                ");
                     wrefresh(stdscr);
                     sem_post(&sem);
                     //makeMove(inputx,inputy);
@@ -116,6 +119,9 @@ void chat (int conn_fd)
     pthread_create(&tid,NULL,pick_from_mouse,NULL);
 
     board_init();
+    mvwprintw(stdscr,13,0,"Your stone is Black");
+    wrefresh(stdscr);
+
     print_board(stdscr);
     while(1){
        
@@ -146,7 +152,7 @@ void chat (int conn_fd)
             mvwprintw(stdscr,15,0,"Game end");
             break;
         }*/
-        mvwprintw(stdscr,17,0,"msg.x = %d msg.y = %d",msg.x,msg.y);
+        //mvwprintw(stdscr,17,0,"msg.x = %d msg.y = %d",msg.x,msg.y);
         wrefresh(stdscr);
         makeMove(msg.y,msg.x);
         changePlayer();

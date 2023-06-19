@@ -86,25 +86,12 @@ void* pick_from_mouse(){
                     continue;
                 }
                 else{//놓을 수 있는 곳
-                    mvwprintw(stdscr,12,0,"can put there");
+                    mvwprintw(stdscr,12,0,"                ");
                     wrefresh(stdscr);
                     sem_post(&sem);
-                    //makeMove(inputx,inputy);
-                    //changePlayer();
-                    //print_board(stdscr);
-                    //wrefresh(stdscr);
+                    
                 }
-                /*if (isBoardFull()) {
-                    // 게임 보드가 가득 찬 경우
-                    mvwprintw(stdscr,15,0,"Board is full game over.");
-                    break;
-                }
-                
-                if (!isValidMoveAvailable()) {
-                    // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
-                    mvwprintw(stdscr,15,0, "there is no place to put the rock");
-                    break;
-                }*/
+             
             }
         }
     }
@@ -124,21 +111,23 @@ void chat (int conn_fd)
     sem_init(&sem,0,0);
 
     board_init();
+    mvwprintw(stdscr,13,0,"Your stone is White");
+    wrefresh(stdscr);
     print_board(stdscr);
     while(1){
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
-        mvwprintw(stdscr,15,0,"ret = %d, msg.x= %d, msg.y= %d",ret,msg.x,msg.y);
-        /*if(msg=-1){
+        
+        if(msg=-1){
             mvwprintw(stdscr,15,0,"Game end");
             break;
-        }*/
+        }
         makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
 
         
-        /*if (isBoardFull()) {
+        if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
             send(conn_fd, "quit", sizeof(msg0) ;
@@ -149,7 +138,7 @@ void chat (int conn_fd)
             mvwprintw(stdscr,15,0, "there is no place to put the rock");
             send(conn_fd, "quit", sizeof(msg0) ;
             break;
-        }*/
+        }
         sem_wait(&sem);
         send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
         makeMove(msg.y,msg.x);
@@ -177,5 +166,7 @@ int main (int argc, char const **argv)
 	chat(conn_fd) ;
 
 	shutdown(conn_fd, SHUT_RDWR) ;
+
+    endwin();
 } 
 

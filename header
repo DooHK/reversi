@@ -1,0 +1,5 @@
+reversi_cilent: reversi_program.o reversi_cilent.o
+	gcc -o reversi_cilent reversi_program.o reversi_cilent.o -lncurses
+
+reversi_server: reversi_server.o reversi_program.o
+	gcc -o reversi_server reversi_program.o reversi_server.o -lncurses

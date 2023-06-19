@@ -43,7 +43,8 @@ void board_init(){
     board[4][5]="W";
     board[5][4]="W";
     board[5][5]="B";
-
+    mvwprintw(stdscr,9,0,"------Reversi------");
+    mvwprintw(stdscr,10,0,"Black turn");
 
     
 
@@ -61,11 +62,16 @@ void print_board(WINDOW* win){
             wrefresh(win);
         }
     }
-    if(strcmp(currentPlayer,"B")==0)
-        mvwprintw(win,13,0,"black turn");
-    else
-        mvwprintw(win,13,0,"white turn");
-
+    mvwprintw(win,9,0,"------Reversi------");
+    wrefresh(win);
+    if(strcmp(currentPlayer,"B")==0){
+        mvwprintw(win,10,0,"Black turn");
+        wrefresh(win);
+    }
+    else{
+        mvwprintw(win,10,0,"White turn");
+        wrefresh(win);
+    }
 }
 
 
