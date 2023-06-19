@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "tcp.h": "c",
+        "ncurses.h": "c",
+        "reversi_data.h": "c",
+        "string.h": "c",
+        "reversi_program.h": "c",
+        "pthread.h": "c",
+        "semaphore.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
