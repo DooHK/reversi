@@ -63,47 +63,49 @@ void* pick_from_mouse(){
     while (1) {
         int press = 0;
         int ch = getch();
-        if (ch == KEY_MOUSE) {
-            if (getmouse(&event) == OK) {
-                if (event.bstate & BUTTON1_CLICKED) {
-                    press=1;
+        if(strcmp(get_currentPlayer(),"W")==0){
+            if (ch == KEY_MOUSE) {
+                if (getmouse(&event) == OK) {
+                    if (event.bstate & BUTTON1_CLICKED) {
+                        press=1;
+                    }
                 }
             }
-        }
-        if(press){
-            inputy= event.x/2;
-            inputx = event.y;
-            msg.x = inputy;
-            msg.y = inputx;
-            
-            
-            mvwprintw(stdscr,11,0,"x = %d y = %d",inputx,inputy);
-            canput = isValidMove(inputx,inputy);
-            if(canput == 0){//돌을 못놓는곳
-                mvwprintw(stdscr,12,0,"can't put there");
-                refresh();
-                continue;
+            if(press){
+                inputy= event.x/2;
+                inputx = event.y;
+                msg.x = inputy;
+                msg.y = inputx;
+                
+                
+                mvwprintw(stdscr,11,0,"x = %d y = %d",inputx,inputy);
+                canput = isValidMove(inputx,inputy);
+                if(canput == 0){//돌을 못놓는곳
+                    mvwprintw(stdscr,12,0,"can't put there");
+                    refresh();
+                    continue;
+                }
+                else{//놓을 수 있는 곳
+                    mvwprintw(stdscr,12,0,"can put there");
+                    wrefresh(stdscr);
+                    sem_post(&sem);
+                    //makeMove(inputx,inputy);
+                    //changePlayer();
+                    //print_board(stdscr);
+                    //wrefresh(stdscr);
+                }
+                /*if (isBoardFull()) {
+                    // 게임 보드가 가득 찬 경우
+                    mvwprintw(stdscr,15,0,"Board is full game over.");
+                    break;
+                }
+                
+                if (!isValidMoveAvailable()) {
+                    // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
+                    mvwprintw(stdscr,15,0, "there is no place to put the rock");
+                    break;
+                }*/
             }
-            else{//놓을 수 있는 곳
-                mvwprintw(stdscr,12,0,"can put there");
-                wrefresh(stdscr);
-                sem_post(&sem);
-                //makeMove(inputx,inputy);
-                //changePlayer();
-                //print_board(stdscr);
-                //wrefresh(stdscr);
-            }
-            /*if (isBoardFull()) {
-                // 게임 보드가 가득 찬 경우
-                mvwprintw(stdscr,15,0,"Board is full game over.");
-                break;
-            }
-            
-            if (!isValidMoveAvailable()) {
-                // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
-                mvwprintw(stdscr,15,0, "there is no place to put the rock");
-                break;
-            }*/
         }
     }
 }

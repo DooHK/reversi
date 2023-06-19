@@ -1,3 +1,5 @@
+all: reversi_cilent reversi_server
+
 reversi_cilent: reversi_program.o reversi_cilent.o
 	gcc -o reversi_cilent reversi_program.o reversi_cilent.o -lncurses
 
@@ -17,4 +19,4 @@ reversi_program.o : reversi_program.c
 	gcc -c -o reversi_program.o reversi_program.c -lncurses
 
 clean:
-	rm -rf reversi reversi_program.o
+	rm -rf reversi reversi_program.o reversi_cilent reversi_server reversi_server.o reversi_cilent.o

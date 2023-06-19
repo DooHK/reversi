@@ -48,6 +48,10 @@ void board_init(){
     
 
 }
+char* get_currentPlayer(){
+    return currentPlayer;
+
+}
 void print_board(WINDOW* win){
     // 윈도우에 원하는 형태 출력
     
