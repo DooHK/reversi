@@ -123,36 +123,54 @@ void chat (int conn_fd)
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
         
         if(msg.x == -1){
-            mvwprintw(stdscr,15,0,"Game end");
-            getch();
+            mvwprintw(stdscr,15,0,"Board is full Game over.");
+            count_stone();
+            print_winner();
+            wgetch(stdscr);
             break;
         }
-        makeMove(msg.y,msg.x);
-        changePlayer();
-        print_board(stdscr);
-        wrefresh(stdscr);
+        if(msg.x == -2){
+            if(!isValidMoveAvailable()){
+                mvwprintw(stdscr,15,0,"All player can't put stone anywhere Game over.");
+                count_stone();
+                print_winner();
+                wgetch(stdscr);
+                break;
 
+            }
+            //상대방은 둘 곳이 없지만 나는 있을 경우 send로 이동
+        }
+        else{ //상대방이 준 msg.x값이 -2일때를 방지
+            makeMove(msg.y,msg.x);
+            changePlayer();
+            print_board(stdscr);
+            wrefresh(stdscr);
+        }
         
         if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
-            mvwprintw(stdscr,15,0,"Board is full game over.");
+            mvwprintw(stdscr,15,0,"Board is full Game over.");
+            count_stone();
+            print_winner();
             msg.x = -1;
+            term = 1;
             send(conn_fd, &msg, sizeof(msg),0) ;
-            getch();
+            wgetch(stdscr);
             break;
         }
-        if (!isValidMoveAvailable()) {
-            // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
-            mvwprintw(stdscr,15,0, "there is no place to put the rock");
-            msg.x =-1;
-            send(conn_fd, &msg, sizeof(msg),0) ;
-            getch();
-
-            break;
-        }
+        
         sem_wait(&sem);
+        if (!isValidMoveAvailable()) {
+            // 현재 플레이어가 돌을 놓을수 없는 경우
+            mvwprintw(stdscr,15,0, "Pass");
+            msg.x = -2;
+        
+        }
+        else //Pass 할 때 돌을 놓지 않기 위해
+            makeMove(msg.y,msg.x);
+            
         send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
-        makeMove(msg.y,msg.x);
+        
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);

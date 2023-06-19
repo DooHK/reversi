@@ -64,6 +64,9 @@ void print_board(WINDOW* win){
     }
     mvwprintw(win,9,0,"------Reversi------");
     wrefresh(win);
+    count_stone();
+    mvwprintw(win,16,0,"Black = %d, White = %d",black,white);
+    wrefresh(win);
     if(strcmp(currentPlayer,"B")==0){
         mvwprintw(win,10,0,"Black turn");
         wrefresh(win);
@@ -105,12 +108,62 @@ int isValidMoveAvailable() {
 
     return 0; // 유효한 돌을 놓을 수 있는 위치가 없음
 }
+void count_stone(){
+    int i, j;
+    int count_b=0,count_w=0;
+    // 보드를 순회하며 각 위치마다 돌을 확인
+    for (i = 1; i <= SIZE - 1; i++) {
+        for (j = 1; j <= SIZE - 1; j++) {
+            if(strcmp(board[i][j],"B")==0)
+                count_b++; 
+            if(strcmp(board[i][j],"W")==0)
+                count_w++;
+        }
+    }
+    black = count_b;
+    white = count_w;
+    
+}
+int count_black(){
+    int i, j;
+    int count=0;
+    // 보드를 순회하며 각 위치마다 돌을 확인
+    for (i = 1; i <= SIZE - 1; i++) {
+        for (j = 1; j <= SIZE - 1; j++) {
+            if(strcmp(board[i][j],"B")==0)
+               count++; 
+        }
+    }
+    black = count;
+    return black;
+}
+int count_white(){
+    int i, j;
+    int count=0;
+    // 보드를 순회하며 각 위치마다 돌을 확인
+    for (i = 1; i <= SIZE - 1; i++) {
+        for (j = 1; j <= SIZE - 1; j++) {
+            if(strcmp(board[i][j],"W")==0)
+               count++; 
+        }
+    }
+    white = count;
+    return white;
+}
+void print_winner(){
+    if(white>black){
+        mvwprintw(stdscr,17,0,"White win!");
+    }
+    else{
+        mvwprintw(stdscr,17,0,"Black win!");
+    }
+}
 void makeMove(int row, int col) {
     int dr, dc;
     board[row][col]= (char*)malloc(sizeof(char)*2);
     strcpy(board[row][col],currentPlayer);
-    mvwprintw(stdscr,15,0,"%s",currentPlayer);
-    wrefresh(stdscr);
+    
+    
     // 인접한 8개의 방향에 대해 확인
     for (dr = -1; dr <= 1; dr++) {
         for (dc = -1; dc <= 1; dc++) {

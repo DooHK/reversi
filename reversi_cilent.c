@@ -114,11 +114,13 @@ void chat (int conn_fd)
        
         if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
-            mvwprintw(stdscr,15,0,"Board is full game over.");
+            mvwprintw(stdscr,15,0,"Board is full Game over.");
+            count_stone();
+            print_winner();
             msg.x= -1;
             term = 1;
             send(conn_fd, &msg,sizeof(msg),0) ;
-            getch();
+            wgetch(stdscr);
 
             break;
         }
@@ -130,31 +132,38 @@ void chat (int conn_fd)
             msg.x = -2;
             
         }
+        else //x = -2일 때 돌을 이상하게 놓지 않기 위해 
+            makeMove(msg.y,msg.x);
+
         send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
-        makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
         int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
-        if(msg.x == -2){
-            if(!isValidMoveAvailable()){
-                mvwprintw(stdscr,15,0,"All player can't put stone anywhere");
-                //Count_stone(); //돌의 갯수 세기
-            }
-        }
-
         if(msg.x==-1){
-            mvwprintw(stdscr,15,0,"Game end");
+            mvwprintw(stdscr,15,0,"Board is full Game over.");
+            count_stone();
+            print_winner();
             wgetch(stdscr);
             break;
         }
-        
-        wrefresh(stdscr);
-        makeMove(msg.y,msg.x);
-        changePlayer();
-        print_board(stdscr);
-        wrefresh(stdscr);
-
+        if(msg.x == -2){
+            if(!isValidMoveAvailable()){
+                mvwprintw(stdscr,15,0,"All player can't put stone anywhere Game over.");
+                count_stone();
+                print_winner();
+                wgetch(stdscr);
+                break;
+            }
+            //상대방은 둘 곳이 없지만 나는 있을 경우 while을 한 번 더 돌아서 send
+        }
+        else{
+            wrefresh(stdscr);
+            makeMove(msg.y,msg.x);
+            changePlayer();
+            print_board(stdscr);
+            wrefresh(stdscr);
+        }
     }
     pthread_join(tid,NULL);
    

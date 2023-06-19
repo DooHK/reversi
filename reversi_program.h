@@ -9,7 +9,8 @@ void changePlayer();
 int isValidMove(int row, int col);
 int isBoardFull() ;
 int isValidMoveAvailable();
-
-
-
+int count_white();
+int count_black();
+void print_winner();
+void count_stone();
 
