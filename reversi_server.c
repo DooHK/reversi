@@ -14,7 +14,7 @@
 #define SIZE 9
 struct buf{
     int x, y;
-}msg[2];
+}msg;
 sem_t sem;
 int listen_at_port (int portnum) 
 {
@@ -73,8 +73,8 @@ void* pick_from_mouse(){
         if(press){
             inputy= event.x/2;
             inputx = event.y;
-            msg[0].x = inputy;
-            msg[0].y = inputx;
+            msg.x = inputy;
+            msg.y = inputx;
             
             
             mvwprintw(stdscr,11,0,"x = %d y = %d",inputx,inputy);
@@ -115,8 +115,8 @@ void chat (int conn_fd)
     keypad(stdscr, TRUE);
     mousemask(ALL_MOUSE_EVENTS, NULL);
     
-    memset(&msg[0], 0, sizeof(struct buf));
-    memset(&msg[1], 0, sizeof(struct buf));
+    memset(&msg, 0, sizeof(struct buf));
+    memset(&msg, 0, sizeof(struct buf));
     pthread_t tid;
     pthread_create(&tid,NULL,pick_from_mouse,NULL);
     sem_init(&sem,0,0);
@@ -124,12 +124,13 @@ void chat (int conn_fd)
     board_init();
     print_board(stdscr);
     while(1){
-        recv(conn_fd,(char*)&msg[1],sizeof(msg[1]),0);
-        /*if(msg.x==-1){
+        int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
+        mvwprintw(stdscr,15,0,"ret = %d, msg.x= %d, msg.y= %d",ret,msg.x,msg.y);
+        /*if(msg=-1){
             mvwprintw(stdscr,15,0,"Game end");
             break;
         }*/
-        makeMove(msg[1].y,msg[1].x);
+        makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
@@ -138,25 +139,25 @@ void chat (int conn_fd)
         /*if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
-            send(conn_fd, "quit", sizeof(msg), 0) ;
+            send(conn_fd, "quit", sizeof(msg0) ;
             break;
         }
         if (!isValidMoveAvailable()) {
             // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
             mvwprintw(stdscr,15,0, "there is no place to put the rock");
-            send(conn_fd, "quit", sizeof(msg), 0) ;
+            send(conn_fd, "quit", sizeof(msg0) ;
             break;
         }*/
         sem_wait(&sem);
-        send(conn_fd, (char*)&msg[0], sizeof(msg[0]), 0) ;
-        makeMove(msg[0].y,msg[0].x);
+        send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
+        makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
         
     }
     
-    pthread_join(tidm,NULL);
+    pthread_join(tid,NULL);
     
 
     endwin(); // ncurses 모드 종료

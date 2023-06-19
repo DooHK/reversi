@@ -14,7 +14,7 @@
 #define SIZE 9
 struct buf{
     int x, y;
-}msg[2];
+}msg;
 sem_t sem;
 
 int connect_ipaddr_port (const char * ip, int port)
@@ -66,8 +66,8 @@ void* pick_from_mouse(){
         if(press){
             inputy= event.x/2;
             inputx = event.y;
-            msg[0].x = inputy;
-            msg[0].y = inputx;
+            msg.x = inputy;
+            msg.y = inputx;
             
             
             mvwprintw(stdscr,11,0,"x = %d y = %d",inputx,inputy);
@@ -108,8 +108,7 @@ void chat (int conn_fd)
     echo();
     keypad(stdscr, TRUE);
     mousemask(ALL_MOUSE_EVENTS, NULL);
-    memset(&msg[0], 0, sizeof(struct buf));
-    memset(&msg[1], 0, sizeof(struct buf));
+    
     pthread_t tid;
     sem_init(&sem,0,0);
     pthread_create(&tid,NULL,pick_from_mouse,NULL);
@@ -121,33 +120,33 @@ void chat (int conn_fd)
         /*if (isBoardFull()) {
             // 게임 보드가 가득 찬 경우
             mvwprintw(stdscr,15,0,"Board is full game over.");
-            msg.x = -1;
-            send(conn_fd, &msg, sizeof(msg), 0) ;
+            msg= -1;
+            send(conn_fd, &msgizeof(msg0) ;
             break;
         }
         if (!isValidMoveAvailable()) {
             // 현재 플레이어와 상대방 모두 돌을 놓을 수 없는 경우
             mvwprintw(stdscr,15,0, "there is no place to put the rock");
-            msg.x=-1;
-            send(conn_fd, &msg, sizeof(msg), 0) ;
+            msg.x = -1;
+            send(conn_fd, &msg ,sizeof(msg),0) ;
             break;
         }*/
         sem_wait(&sem);
-        send(conn_fd, (char*)&msg[0], sizeof(msg[0]), 0) ;
-        makeMove(msg[0].y,msg[0].x);
+        send(conn_fd, (char*)&msg, sizeof(msg), 0) ;
+        makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
-        int ret = recv(conn_fd,(char*)&msg[1],sizeof(msg[1]),0);
+        int ret = recv(conn_fd,(char*)&msg,sizeof(msg),0);
         
 
-        /*if(msg.x==-1){
+        /*if(msg=-1){
             mvwprintw(stdscr,15,0,"Game end");
             break;
         }*/
-        mvwprintw(stdscr,17,0,"msg[1].x = %d msg[1].y = %d",msg[1].x,msg[1].y);
+        mvwprintw(stdscr,17,0,"msg.x = %d msg.y = %d",msg.x,msg.y);
         wrefresh(stdscr);
-        makeMove(msg[1].y,msg[1].x);
+        makeMove(msg.y,msg.x);
         changePlayer();
         print_board(stdscr);
         wrefresh(stdscr);
